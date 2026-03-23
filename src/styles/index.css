@@ -845,6 +845,15 @@ body {
 .result-card.correct .result-mark { color: var(--correct-green); }
 .result-card.wrong .result-mark { color: var(--wrong-red); }
 
+/* Review phase name reveal */
+.review-pokemon-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 16px;
+  color: var(--text-accent);
+  text-align: center;
+  margin: 8px 0 12px;
+}
+
 /* === Finish Screen === */
 .finish-screen {
   display: flex;

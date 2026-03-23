@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { generatePhrase, validateWord } from '../utils/seed.js';
 import { WORDLIST } from '../utils/wordlist.js';
 import { QUIZ_COUNTS } from '../utils/constants.js';
@@ -11,6 +11,7 @@ export default function HomeScreen({ onNavigate }) {
   const [codeWords, setCodeWords] = useState(['', '', '']);
   const [codeValid, setCodeValid] = useState([null, null, null]);
   const [enterCount, setEnterCount] = useState(null);
+  const wordInputRefs = [useRef(null), useRef(null), useRef(null)];
 
   const handleStartQuiz = () => setMode('start');
   const handleEnterCode = () => setMode('enter');
@@ -53,6 +54,10 @@ export default function HomeScreen({ onNavigate }) {
       newValid[index] = null;
     } else {
       newValid[index] = validateWord(lower);
+      // Auto-advance to next input when a valid word is selected
+      if (newValid[index] && index < 2) {
+        setTimeout(() => wordInputRefs[index + 1].current?.focus(), 50);
+      }
     }
     setCodeValid(newValid);
   };
@@ -129,6 +134,7 @@ export default function HomeScreen({ onNavigate }) {
             {[0, 1, 2].map(i => (
               <div key={i} className="word-input-group">
                 <input
+                  ref={wordInputRefs[i]}
                   type="text"
                   className={`word-input ${codeValid[i] === true ? 'valid' : codeValid[i] === false ? 'invalid' : ''}`}
                   placeholder={`Word ${i + 1}`}

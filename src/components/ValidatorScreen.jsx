@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { getQuizPokemon } from '../utils/seed.js';
 import PokemonImage from './PokemonImage.jsx';
 import PokemonDetail from './PokemonDetail.jsx';
@@ -9,9 +9,12 @@ export default function ValidatorScreen({ phrase, count, pokemonData, onNavigate
   const [score, setScore] = useState(0);
   const [results, setResults] = useState([]);
   const [finished, setFinished] = useState(false);
-  const topRef = useRef(null);
 
   const quizIds = useMemo(() => getQuizPokemon(phrase, count), [phrase, count]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [current]);
 
   const handleAnswer = (correct) => {
     const pokemonId = quizIds[current];
@@ -24,7 +27,6 @@ export default function ValidatorScreen({ phrase, count, pokemonData, onNavigate
       setFinished(true);
     } else {
       setCurrent(c => c + 1);
-      topRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -44,7 +46,7 @@ export default function ValidatorScreen({ phrase, count, pokemonData, onNavigate
   const pokemon = pokemonData.pokemon[pokemonId];
 
   return (
-    <div className="validator-screen" ref={topRef}>
+    <div className="validator-screen">
       <div className="game-header">
         <span className="header-phrase">{phrase}</span>
         <span className="header-progress">{current + 1} / {count}</span>

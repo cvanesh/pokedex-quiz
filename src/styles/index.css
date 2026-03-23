@@ -845,13 +845,24 @@ body {
 .result-card.correct .result-mark { color: var(--correct-green); }
 .result-card.wrong .result-mark { color: var(--wrong-red); }
 
-/* Review phase name reveal */
-.review-pokemon-name {
+/* Answer key (challenger end screen) */
+.answer-key {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 16px 0;
+}
+
+.answer-key h2 {
   font-family: 'Press Start 2P', monospace;
-  font-size: 16px;
+  font-size: 18px;
   color: var(--text-accent);
-  text-align: center;
-  margin: 8px 0 12px;
+}
+
+.result-card.answer-card {
+  border-color: var(--card-bg);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 /* === Finish Screen === */

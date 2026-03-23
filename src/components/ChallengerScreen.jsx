@@ -1,23 +1,20 @@
 import { useState, useMemo, useEffect } from 'react';
 import { getQuizPokemon } from '../utils/seed.js';
 import PokemonImage from './PokemonImage.jsx';
-import ScoreSummary from './ScoreSummary.jsx';
 
 export default function ChallengerScreen({ phrase, count, pokemonData, onNavigate }) {
   const [current, setCurrent] = useState(0);
-  const [phase, setPhase] = useState('quiz'); // 'quiz' | 'review' | 'results'
-  const [reviewIndex, setReviewIndex] = useState(0);
-  const [results, setResults] = useState([]);
+  const [finished, setFinished] = useState(false);
 
   const quizIds = useMemo(() => getQuizPokemon(phrase, count), [phrase, count]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [current, reviewIndex, phase]);
+  }, [current, finished]);
 
   const handleNext = () => {
     if (current >= count - 1) {
-      setPhase('review');
+      setFinished(true);
     } else {
       setCurrent(c => c + 1);
     }
@@ -27,49 +24,24 @@ export default function ChallengerScreen({ phrase, count, pokemonData, onNavigat
     if (current > 0) setCurrent(c => c - 1);
   };
 
-  const handleReviewAnswer = (correct) => {
-    const pokemonId = quizIds[reviewIndex];
-    setResults(prev => [...prev, { id: pokemonId, correct }]);
-
-    if (reviewIndex >= count - 1) {
-      setPhase('results');
-    } else {
-      setReviewIndex(i => i + 1);
-    }
-  };
-
-  if (phase === 'results') {
+  if (finished) {
     return (
       <div className="challenger-screen">
-        <ScoreSummary
-          results={results}
-          pokemonData={pokemonData}
-          onPlayAgain={() => onNavigate('home')}
-        />
-      </div>
-    );
-  }
-
-  if (phase === 'review') {
-    const pokemonId = quizIds[reviewIndex];
-    const pokemon = pokemonData.pokemon[pokemonId];
-
-    return (
-      <div className="challenger-screen">
-        <div className="game-header">
-          <span className="header-phrase">Did you get it right?</span>
-          <span className="header-progress">{reviewIndex + 1} / {count}</span>
-        </div>
-        <div className="game-main">
-          <PokemonImage id={pokemonId} size="large" alt={pokemon?.name || 'Pokémon'} />
-        </div>
-        <h2 className="review-pokemon-name">{pokemon?.name}</h2>
-        <div className="game-controls validator-controls">
-          <button className="btn btn-correct" onClick={() => handleReviewAnswer(true)}>
-            ✓ KNEW IT
-          </button>
-          <button className="btn btn-wrong" onClick={() => handleReviewAnswer(false)}>
-            ✗ NOPE
+        <div className="answer-key">
+          <h2>Answer Key</h2>
+          <div className="results-grid">
+            {quizIds.map(id => {
+              const p = pokemonData.pokemon[id];
+              return (
+                <div key={id} className="result-card answer-card">
+                  <PokemonImage id={id} size="small" alt={p?.name || '?'} />
+                  <span className="result-name">{p?.name || '?'}</span>
+                </div>
+              );
+            })}
+          </div>
+          <button className="btn btn-primary btn-large" onClick={() => onNavigate('home')}>
+            PLAY AGAIN
           </button>
         </div>
       </div>

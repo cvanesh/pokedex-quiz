@@ -523,22 +523,13 @@ body {
 }
 
 /* === Validator Layout === */
-.validator-main {
-  display: flex;
-  gap: 24px;
-  align-items: flex-start;
-}
-
 .validator-image {
-  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
 }
 
 .validator-details {
-  flex: 1;
-  min-width: 0;
-  max-height: 60vh;
-  overflow-y: auto;
-  padding-right: 8px;
+  margin-top: 16px;
 }
 
 /* Scrollbar styling */
@@ -900,17 +891,6 @@ body {
     font-size: 16px;
   }
 
-  .validator-main {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .validator-details {
-    max-height: none;
-    overflow-y: visible;
-    padding-right: 0;
-    width: 100%;
-  }
 
   .pokemon-img-large {
     width: 200px;

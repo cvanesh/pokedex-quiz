@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { getQuizPokemon } from '../utils/seed.js';
 import PokemonImage from './PokemonImage.jsx';
 import PokemonDetail from './PokemonDetail.jsx';
@@ -9,6 +9,7 @@ export default function ValidatorScreen({ phrase, count, pokemonData, onNavigate
   const [score, setScore] = useState(0);
   const [results, setResults] = useState([]);
   const [finished, setFinished] = useState(false);
+  const topRef = useRef(null);
 
   const quizIds = useMemo(() => getQuizPokemon(phrase, count), [phrase, count]);
 
@@ -23,6 +24,7 @@ export default function ValidatorScreen({ phrase, count, pokemonData, onNavigate
       setFinished(true);
     } else {
       setCurrent(c => c + 1);
+      topRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -42,19 +44,14 @@ export default function ValidatorScreen({ phrase, count, pokemonData, onNavigate
   const pokemon = pokemonData.pokemon[pokemonId];
 
   return (
-    <div className="validator-screen">
+    <div className="validator-screen" ref={topRef}>
       <div className="game-header">
         <span className="header-phrase">{phrase}</span>
         <span className="header-progress">{current + 1} / {count}</span>
         <span className="header-score">Score: {score} / {current}</span>
       </div>
-      <div className="validator-main">
-        <div className="validator-image">
-          <PokemonImage id={pokemonId} size="large" alt={pokemon?.name || 'Pokémon'} />
-        </div>
-        <div className="validator-details">
-          <PokemonDetail pokemon={pokemon} />
-        </div>
+      <div className="validator-image">
+        <PokemonImage id={pokemonId} size="large" alt={pokemon?.name || 'Pokémon'} />
       </div>
       <div className="game-controls validator-controls">
         <button className="btn btn-correct" onClick={() => handleAnswer(true)}>
@@ -63,6 +60,9 @@ export default function ValidatorScreen({ phrase, count, pokemonData, onNavigate
         <button className="btn btn-wrong" onClick={() => handleAnswer(false)}>
           ✗ WRONG
         </button>
+      </div>
+      <div className="validator-details">
+        <PokemonDetail pokemon={pokemon} />
       </div>
     </div>
   );

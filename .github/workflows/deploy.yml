@@ -29,6 +29,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Fetch PokeAPI CSV data
+        run: |
+          git clone --depth 1 --filter=blob:none --sparse https://github.com/PokeAPI/pokeapi.git _pokeapi_tmp
+          cd _pokeapi_tmp && git sparse-checkout set data/v2/csv && cd ..
+          mkdir -p data/v2
+          cp -r _pokeapi_tmp/data/v2/csv data/v2/
+          rm -rf _pokeapi_tmp
+
       - name: Build data
         run: node scripts/build-data.js
 

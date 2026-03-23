@@ -845,24 +845,154 @@ body {
 .result-card.correct .result-mark { color: var(--correct-green); }
 .result-card.wrong .result-mark { color: var(--wrong-red); }
 
-/* Answer key (challenger end screen) */
-.answer-key {
+/* === Browse Screen === */
+.browse-screen {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 24px;
-  padding: 16px 0;
+  gap: 16px;
 }
 
-.answer-key h2 {
+.browse-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.browse-header h2 {
   font-family: 'Press Start 2P', monospace;
-  font-size: 18px;
+  font-size: 14px;
   color: var(--text-accent);
 }
 
-.result-card.answer-card {
-  border-color: var(--card-bg);
+.browse-back {
+  margin-bottom: 8px;
+}
+
+.browse-search {
+  margin-bottom: 4px;
+}
+
+.search-input {
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  padding: 12px 16px;
+  width: 100%;
+  border: 2px solid #444;
+  border-radius: 8px;
+  background: #1e1e3a;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.search-input:focus {
+  border-color: #4a90d9;
+}
+
+.search-results, .gen-pokemon-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.no-results {
+  color: #777;
+  font-style: italic;
+  text-align: center;
+  width: 100%;
+  padding: 20px;
+}
+
+.browse-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
+  width: 90px;
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.04);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.browse-card:active {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--text-accent);
+}
+
+.browse-card-name {
+  font-size: 10px;
+  text-align: center;
+  color: #ccc;
+}
+
+.browse-card-id {
+  font-size: 9px;
+  color: #666;
+}
+
+.gen-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gen-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--card-bg);
+  border: none;
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.gen-header.expanded {
+  background: #143a6b;
+  border-radius: 8px 8px 0 0;
+}
+
+.gen-header:active {
+  background: #1a4a80;
+}
+
+.gen-count {
+  font-size: 12px;
+  color: #888;
+  margin-left: auto;
+}
+
+.gen-arrow {
+  font-size: 14px;
+  color: #888;
+}
+
+.gen-group .gen-pokemon-grid {
+  background: rgba(15, 52, 96, 0.3);
+  border-radius: 0 0 8px 8px;
+  padding: 12px;
+}
+
+.browse-detail-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.browse-detail-image {
+  display: flex;
+  justify-content: center;
 }
 
 /* === Finish Screen === */

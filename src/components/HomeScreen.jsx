@@ -90,6 +90,9 @@ export default function HomeScreen({ onNavigate }) {
           <button className="btn btn-secondary btn-large" onClick={handleEnterCode}>
             ENTER CODE
           </button>
+          <button className="btn btn-secondary btn-large" onClick={() => onNavigate('browse')}>
+            BROWSE POKéMON
+          </button>
         </div>
       )}
 

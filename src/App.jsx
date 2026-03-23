@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import HomeScreen from './components/HomeScreen.jsx';
 import ChallengerScreen from './components/ChallengerScreen.jsx';
 import ValidatorScreen from './components/ValidatorScreen.jsx';
+import BrowseScreen from './components/BrowseScreen.jsx';
 
 export default function App() {
   const [screen, setScreen] = useState('home');
@@ -76,6 +77,12 @@ export default function App() {
             <ValidatorScreen
               phrase={phrase}
               count={count}
+              pokemonData={pokemonData}
+              onNavigate={navigate}
+            />
+          )}
+          {screen === 'browse' && (
+            <BrowseScreen
               pokemonData={pokemonData}
               onNavigate={navigate}
             />

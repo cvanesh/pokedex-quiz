@@ -27,21 +27,11 @@ export default function ChallengerScreen({ phrase, count, pokemonData, onNavigat
   if (finished) {
     return (
       <div className="challenger-screen">
-        <div className="answer-key">
-          <h2>Answer Key</h2>
-          <div className="results-grid">
-            {quizIds.map(id => {
-              const p = pokemonData.pokemon[id];
-              return (
-                <div key={id} className="result-card answer-card">
-                  <PokemonImage id={id} size="small" alt={p?.name || '?'} />
-                  <span className="result-name">{p?.name || '?'}</span>
-                </div>
-              );
-            })}
-          </div>
+        <div className="finish-screen">
+          <h2>Quiz Complete!</h2>
+          <p>Ask your friend for your score.</p>
           <button className="btn btn-primary btn-large" onClick={() => onNavigate('home')}>
-            PLAY AGAIN
+            HOME
           </button>
         </div>
       </div>

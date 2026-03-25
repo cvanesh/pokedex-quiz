@@ -67,11 +67,16 @@ export default function BrowseScreen({ pokemonData, onNavigate }) {
   }, []);
 
   const addType = (type) => {
+    if (selectedTypes.length >= 2) return;
     setSelectedTypes(prev => [...prev, type]);
     setTypeSearch('');
-    // Keep dropdown open and re-focus so user can add more types
-    setTypeDropdownOpen(true);
-    setTimeout(() => typeInputRef.current?.focus(), 0);
+    if (selectedTypes.length >= 1) {
+      // Already at max after adding, close dropdown
+      setTypeDropdownOpen(false);
+    } else {
+      setTypeDropdownOpen(true);
+      setTimeout(() => typeInputRef.current?.focus(), 0);
+    }
   };
 
   const removeType = (type) => {
@@ -197,11 +202,11 @@ export default function BrowseScreen({ pokemonData, onNavigate }) {
                     </button>
                   </span>
                 ))}
-                <input
+                {selectedTypes.length < 2 && <input
                   ref={typeInputRef}
                   type="text"
                   className="type-tag-input"
-                  placeholder={selectedTypes.length === 0 ? 'Add types to filter...' : ''}
+                  placeholder={selectedTypes.length === 0 ? 'Add types to filter...' : 'Add 2nd type...'}
                   value={typeSearch}
                   onChange={e => {
                     setTypeSearch(e.target.value);
@@ -213,8 +218,8 @@ export default function BrowseScreen({ pokemonData, onNavigate }) {
                       removeType(selectedTypes[selectedTypes.length - 1]);
                     }
                   }}
-                />
-                {typeDropdownOpen && filteredTypeOptions.length > 0 && (
+                />}
+                {typeDropdownOpen && selectedTypes.length < 2 && filteredTypeOptions.length > 0 && (
                   <div className="type-dropdown">
                     {filteredTypeOptions.map(type => (
                       <button

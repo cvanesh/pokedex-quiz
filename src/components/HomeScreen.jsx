@@ -43,9 +43,12 @@ export default function HomeScreen({ onNavigate }) {
     onNavigate('challenger', { phrase: generatedPhrase, count: selectedCount });
   };
 
+  const prevWordLengths = useRef([0, 0, 0]);
+
   const handleWordChange = (index, e) => {
     const value = e.target.value;
     const lower = value.toLowerCase().trim();
+    const prevLen = prevWordLengths.current[index];
     const newWords = [...codeWords];
     newWords[index] = lower;
     setCodeWords(newWords);
@@ -58,13 +61,23 @@ export default function HomeScreen({ onNavigate }) {
     }
     setCodeValid(newValid);
 
-    // Auto-advance when user selects from dropdown
+    prevWordLengths.current[index] = lower.length;
+
+    // Auto-advance when user selects from dropdown or autocomplete
+    // Detect: inputType is insertReplacementText (Chrome), OR value jumped 2+ chars and is now valid (iOS/Safari)
     const inputType = e.nativeEvent?.inputType;
-    if (inputType === 'insertReplacementText' && newValid[index]) {
+    const wasDropdownSelect = inputType === 'insertReplacementText';
+    const wasAutocomplete = newValid[index] && (lower.length - prevLen) >= 2;
+
+    if ((wasDropdownSelect || wasAutocomplete) && newValid[index]) {
       if (index < 2) {
         setTimeout(() => wordInputRefs[index + 1].current?.focus(), 50);
       } else {
-        setTimeout(() => wordInputRefs[index].current?.blur(), 50);
+        setTimeout(() => {
+          wordInputRefs[index].current?.blur();
+          // Focus the JOIN QUIZ button
+          document.querySelector('.code-entry .btn-primary')?.focus();
+        }, 50);
       }
     }
   };
@@ -80,10 +93,10 @@ export default function HomeScreen({ onNavigate }) {
     }
   };
 
-  const getSuggestions = (value) => {
-    if (!value || value.length < 2) return [];
+  const getSuggestions = (value, isValid) => {
+    if (!value || value.length < 2 || isValid) return [];
     const lower = value.toLowerCase();
-    return WORDLIST.filter(w => w.startsWith(lower)).slice(0, 5);
+    return WORDLIST.filter(w => w.startsWith(lower) && w !== lower).slice(0, 5);
   };
 
   const allWordsValid = codeValid.every(v => v === true) && enterCount !== null;
@@ -180,7 +193,7 @@ export default function HomeScreen({ onNavigate }) {
                   list={`suggestions-${i}`}
                 />
                 <datalist id={`suggestions-${i}`}>
-                  {getSuggestions(codeWords[i]).map(s => (
+                  {getSuggestions(codeWords[i], codeValid[i]).map(s => (
                     <option key={s} value={s} />
                   ))}
                 </datalist>

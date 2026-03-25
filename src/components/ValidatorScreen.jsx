@@ -51,6 +51,9 @@ export default function ValidatorScreen({ phrase, count, pokemonData, onNavigate
         <span className="header-phrase">{phrase}</span>
         <span className="header-progress">{current + 1} / {count}</span>
         <span className="header-score">Score: {score} / {current}</span>
+        <button className="btn-home" onClick={() => { if (window.confirm('Leave the quiz?')) onNavigate('home'); }} title="Home">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2L2 9h3v8h4v-5h2v5h4V9h3L10 2z"/></svg>
+        </button>
       </div>
       <div className="validator-image">
         <PokemonImage id={pokemonId} size="large" alt={pokemon?.name || 'Pokémon'} />

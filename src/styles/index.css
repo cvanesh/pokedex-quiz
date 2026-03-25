@@ -230,6 +230,21 @@ body {
 
 .btn-back:active { transform: none; box-shadow: none; }
 
+.btn-home {
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+}
+
+.btn-home:hover, .btn-home:active {
+  color: var(--text-accent);
+}
+
 .btn-correct {
   background: linear-gradient(180deg, #2dd46b, #1ea84f);
   color: #fff;
@@ -716,21 +731,31 @@ body {
 
 /* === Evolution Chain === */
 .evolution-chain {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 4px;
+  overflow-x: auto;
 }
 
-.evo-step {
+.evo-tree-row {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+}
+
+.evo-arrow-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.evo-branch {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .evo-arrow {
   color: #666;
-  font-size: 11px;
+  font-size: 10px;
   white-space: nowrap;
 }
 
@@ -739,6 +764,7 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 2px;
+  min-width: 50px;
 }
 
 .evo-img {

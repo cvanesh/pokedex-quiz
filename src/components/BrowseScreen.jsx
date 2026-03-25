@@ -69,8 +69,9 @@ export default function BrowseScreen({ pokemonData, onNavigate }) {
   const addType = (type) => {
     setSelectedTypes(prev => [...prev, type]);
     setTypeSearch('');
-    setTypeDropdownOpen(false);
-    typeInputRef.current?.focus();
+    // Keep dropdown open and re-focus so user can add more types
+    setTypeDropdownOpen(true);
+    setTimeout(() => typeInputRef.current?.focus(), 0);
   };
 
   const removeType = (type) => {
@@ -177,7 +178,10 @@ export default function BrowseScreen({ pokemonData, onNavigate }) {
 
           {browseMode === 'type' && (
             <div className="type-filter-section">
-              <div className="type-tags-input" ref={typeContainerRef}>
+              <div className="type-tags-input" ref={typeContainerRef} onClick={() => {
+                typeInputRef.current?.focus();
+                setTypeDropdownOpen(true);
+              }}>
                 {selectedTypes.map(type => (
                   <span
                     key={type}

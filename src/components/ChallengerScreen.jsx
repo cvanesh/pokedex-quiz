@@ -45,6 +45,9 @@ export default function ChallengerScreen({ phrase, count, pokemonData, onNavigat
       <div className="game-header">
         <span className="header-phrase">{phrase}</span>
         <span className="header-progress">{current + 1} / {count}</span>
+        <button className="btn-home" onClick={() => { if (window.confirm('Leave the quiz?')) onNavigate('home'); }} title="Home">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2L2 9h3v8h4v-5h2v5h4V9h3L10 2z"/></svg>
+        </button>
       </div>
       <div className="game-main">
         <PokemonImage id={pokemonId} size="large" alt="Who's that Pokémon?" />

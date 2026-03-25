@@ -3,6 +3,7 @@ import HomeScreen from './components/HomeScreen.jsx';
 import ChallengerScreen from './components/ChallengerScreen.jsx';
 import ValidatorScreen from './components/ValidatorScreen.jsx';
 import BrowseScreen from './components/BrowseScreen.jsx';
+import PokeDialog from './components/PokeDialog.jsx';
 
 export default function App() {
   const [screen, setScreen] = useState('home');
@@ -11,6 +12,19 @@ export default function App() {
   const [pokemonData, setPokemonData] = useState(null);
   const [slideDir, setSlideDir] = useState('right');
   const prevScreen = useRef('home');
+
+  // Dialog state
+  const [dialog, setDialog] = useState(null);
+
+  const showConfirm = useCallback((message) => {
+    return new Promise((resolve) => {
+      setDialog({
+        message,
+        onConfirm: () => { setDialog(null); resolve(true); },
+        onCancel: () => { setDialog(null); resolve(false); },
+      });
+    });
+  }, []);
 
   useEffect(() => {
     fetch(import.meta.env.BASE_URL + 'pokemon-data.json')
@@ -27,13 +41,18 @@ export default function App() {
     setScreen(newScreen);
   }, [screen]);
 
+  // Use a ref so the popstate handler always sees the latest showConfirm & screen
+  const screenRef = useRef(screen);
+  screenRef.current = screen;
+
   useEffect(() => {
-    const handlePopState = () => {
-      if (screen !== 'home') {
-        if (window.confirm('Leave the quiz?')) {
+    const handlePopState = async () => {
+      if (screenRef.current !== 'home') {
+        // Push state immediately to prevent actual navigation
+        window.history.pushState(null, '', '');
+        const confirmed = await showConfirm('Leave the quiz?');
+        if (confirmed) {
           setScreen('home');
-        } else {
-          window.history.pushState(null, '', '');
         }
       }
     };
@@ -44,7 +63,7 @@ export default function App() {
     }
 
     return () => window.removeEventListener('popstate', handlePopState);
-  }, [screen]);
+  }, [screen, showConfirm]);
 
   if (!pokemonData) {
     return (
@@ -71,6 +90,7 @@ export default function App() {
               count={count}
               pokemonData={pokemonData}
               onNavigate={navigate}
+              showConfirm={showConfirm}
             />
           )}
           {screen === 'validator' && (
@@ -79,6 +99,7 @@ export default function App() {
               count={count}
               pokemonData={pokemonData}
               onNavigate={navigate}
+              showConfirm={showConfirm}
             />
           )}
           {screen === 'browse' && (
@@ -89,6 +110,13 @@ export default function App() {
           )}
         </div>
       </div>
+      {dialog && (
+        <PokeDialog
+          message={dialog.message}
+          onConfirm={dialog.onConfirm}
+          onCancel={dialog.onCancel}
+        />
+      )}
     </div>
   );
 }

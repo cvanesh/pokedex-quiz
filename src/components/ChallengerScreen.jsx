@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { getQuizPokemon } from '../utils/seed.js';
 import PokemonImage from './PokemonImage.jsx';
 
-export default function ChallengerScreen({ phrase, count, pokemonData, onNavigate }) {
+export default function ChallengerScreen({ phrase, count, pokemonData, onNavigate, showConfirm }) {
   const [current, setCurrent] = useState(0);
   const [finished, setFinished] = useState(false);
 
@@ -45,7 +45,7 @@ export default function ChallengerScreen({ phrase, count, pokemonData, onNavigat
       <div className="game-header">
         <span className="header-phrase">{phrase}</span>
         <span className="header-progress">{current + 1} / {count}</span>
-        <button className="btn-home" onClick={() => { if (window.confirm('Leave the quiz?')) onNavigate('home'); }} title="Home">
+        <button className="btn-home" onClick={async () => { if (await showConfirm('Leave the quiz?')) onNavigate('home'); }} title="Home">
           <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2L2 9h3v8h4v-5h2v5h4V9h3L10 2z"/></svg>
         </button>
       </div>

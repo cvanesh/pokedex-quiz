@@ -1193,6 +1193,94 @@ body {
   color: #888;
 }
 
+/* === Poké Dialog === */
+.poke-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.poke-dialog {
+  background: linear-gradient(135deg, var(--screen-bg), #0f1a2e);
+  border: 3px solid var(--pokedex-red);
+  border-radius: 16px;
+  padding: 28px 24px 24px;
+  max-width: 320px;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 0 30px rgba(204, 0, 0, 0.3), 0 8px 32px rgba(0, 0, 0, 0.5);
+  animation: dialogPop 0.2s ease-out;
+}
+
+@keyframes dialogPop {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.poke-dialog-pokeball {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(
+    to bottom,
+    var(--pokedex-red) 0%,
+    var(--pokedex-red) 45%,
+    #333 45%,
+    #333 55%,
+    #fff 55%,
+    #fff 100%
+  );
+  border: 2px solid #333;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.poke-dialog-pokeball::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  border-radius: 50%;
+  border: 2px solid #333;
+}
+
+.poke-dialog-message {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  color: var(--text-primary);
+  text-align: center;
+  line-height: 1.8;
+}
+
+.poke-dialog-buttons {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.poke-dialog-btn {
+  flex: 1;
+  font-size: 10px;
+  padding: 12px 16px;
+}
+
 /* === Finish Screen === */
 .finish-screen {
   display: flex;

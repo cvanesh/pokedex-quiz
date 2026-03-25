@@ -43,7 +43,8 @@ export default function HomeScreen({ onNavigate }) {
     onNavigate('challenger', { phrase: generatedPhrase, count: selectedCount });
   };
 
-  const handleWordChange = (index, value) => {
+  const handleWordChange = (index, e) => {
+    const value = e.target.value;
     const lower = value.toLowerCase().trim();
     const newWords = [...codeWords];
     newWords[index] = lower;
@@ -56,6 +57,16 @@ export default function HomeScreen({ onNavigate }) {
       newValid[index] = validateWord(lower);
     }
     setCodeValid(newValid);
+
+    // Auto-advance when user selects from dropdown
+    const inputType = e.nativeEvent?.inputType;
+    if (inputType === 'insertReplacementText' && newValid[index]) {
+      if (index < 2) {
+        setTimeout(() => wordInputRefs[index + 1].current?.focus(), 50);
+      } else {
+        setTimeout(() => wordInputRefs[index].current?.blur(), 50);
+      }
+    }
   };
 
   const handleWordKeyDown = (index, e) => {
@@ -163,7 +174,7 @@ export default function HomeScreen({ onNavigate }) {
                   className={`word-input ${codeValid[i] === true ? 'valid' : codeValid[i] === false ? 'invalid' : ''}`}
                   placeholder={`Word ${i + 1}`}
                   value={codeWords[i]}
-                  onChange={e => handleWordChange(i, e.target.value)}
+                  onChange={e => handleWordChange(i, e)}
                   onKeyDown={e => handleWordKeyDown(i, e)}
                   autoComplete="off"
                   list={`suggestions-${i}`}

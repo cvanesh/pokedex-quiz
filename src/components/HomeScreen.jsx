@@ -54,12 +54,19 @@ export default function HomeScreen({ onNavigate }) {
       newValid[index] = null;
     } else {
       newValid[index] = validateWord(lower);
-      // Auto-advance to next input when a valid word is selected
-      if (newValid[index] && index < 2) {
-        setTimeout(() => wordInputRefs[index + 1].current?.focus(), 50);
-      }
     }
     setCodeValid(newValid);
+  };
+
+  const handleWordKeyDown = (index, e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (codeValid[index] && index < 2) {
+        wordInputRefs[index + 1].current?.focus();
+      } else if (codeValid[index] && index === 2) {
+        wordInputRefs[index].current?.blur();
+      }
+    }
   };
 
   const getSuggestions = (value) => {
@@ -133,30 +140,6 @@ export default function HomeScreen({ onNavigate }) {
       {mode === 'enter' && (
         <div className="code-entry">
           <h2>Enter Quiz Code</h2>
-          <div className="word-inputs">
-            {[0, 1, 2].map(i => (
-              <div key={i} className="word-input-group">
-                <input
-                  ref={wordInputRefs[i]}
-                  type="text"
-                  className={`word-input ${codeValid[i] === true ? 'valid' : codeValid[i] === false ? 'invalid' : ''}`}
-                  placeholder={`Word ${i + 1}`}
-                  value={codeWords[i]}
-                  onChange={e => handleWordChange(i, e.target.value)}
-                  autoComplete="off"
-                  list={`suggestions-${i}`}
-                />
-                <datalist id={`suggestions-${i}`}>
-                  {getSuggestions(codeWords[i]).map(s => (
-                    <option key={s} value={s} />
-                  ))}
-                </datalist>
-                <span className="word-status">
-                  {codeValid[i] === true ? '✓' : codeValid[i] === false ? '✗' : ''}
-                </span>
-              </div>
-            ))}
-          </div>
           <div className="count-selector-inline">
             <p>Number of Pokémon:</p>
             <div className="count-buttons">
@@ -170,6 +153,31 @@ export default function HomeScreen({ onNavigate }) {
                 </button>
               ))}
             </div>
+          </div>
+          <div className="word-inputs">
+            {[0, 1, 2].map(i => (
+              <div key={i} className="word-input-group">
+                <input
+                  ref={wordInputRefs[i]}
+                  type="text"
+                  className={`word-input ${codeValid[i] === true ? 'valid' : codeValid[i] === false ? 'invalid' : ''}`}
+                  placeholder={`Word ${i + 1}`}
+                  value={codeWords[i]}
+                  onChange={e => handleWordChange(i, e.target.value)}
+                  onKeyDown={e => handleWordKeyDown(i, e)}
+                  autoComplete="off"
+                  list={`suggestions-${i}`}
+                />
+                <datalist id={`suggestions-${i}`}>
+                  {getSuggestions(codeWords[i]).map(s => (
+                    <option key={s} value={s} />
+                  ))}
+                </datalist>
+                <span className="word-status">
+                  {codeValid[i] === true ? '✓' : codeValid[i] === false ? '✗' : ''}
+                </span>
+              </div>
+            ))}
           </div>
           <button
             className="btn btn-primary btn-large"

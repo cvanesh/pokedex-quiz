@@ -1,4 +1,5 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
+import { TYPE_COLORS } from '../utils/constants.js';
 import PokemonImage from './PokemonImage.jsx';
 import PokemonDetail from './PokemonDetail.jsx';
 
@@ -14,10 +15,18 @@ const GENERATIONS = [
   { id: 9, name: 'Gen IX — Paldea', range: [906, 1025] },
 ];
 
+const ALL_TYPES = Object.keys(TYPE_COLORS);
+
 export default function BrowseScreen({ pokemonData, onNavigate }) {
   const [search, setSearch] = useState('');
   const [expandedGen, setExpandedGen] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
+  const [browseMode, setBrowseMode] = useState('generation'); // 'generation' | 'type'
+  const [selectedTypes, setSelectedTypes] = useState([]);
+  const [typeSearch, setTypeSearch] = useState('');
+  const [typeDropdownOpen, setTypeDropdownOpen] = useState(false);
+  const typeInputRef = useRef(null);
+  const typeContainerRef = useRef(null);
 
   const allPokemon = useMemo(() => {
     return Object.values(pokemonData.pokemon).sort((a, b) => a.id - b.id);
@@ -29,9 +38,44 @@ export default function BrowseScreen({ pokemonData, onNavigate }) {
     return allPokemon.filter(p => p.name.toLowerCase().includes(lower)).slice(0, 20);
   }, [search, allPokemon]);
 
+  const typeFilterResults = useMemo(() => {
+    if (selectedTypes.length === 0) return [];
+    return allPokemon.filter(p =>
+      selectedTypes.every(t => p.types.includes(t))
+    );
+  }, [selectedTypes, allPokemon]);
+
+  const filteredTypeOptions = useMemo(() => {
+    return ALL_TYPES.filter(t =>
+      !selectedTypes.includes(t) &&
+      t.toLowerCase().startsWith(typeSearch.toLowerCase())
+    );
+  }, [typeSearch, selectedTypes]);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [selectedId]);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (typeContainerRef.current && !typeContainerRef.current.contains(e.target)) {
+        setTypeDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const addType = (type) => {
+    setSelectedTypes(prev => [...prev, type]);
+    setTypeSearch('');
+    setTypeDropdownOpen(false);
+    typeInputRef.current?.focus();
+  };
+
+  const removeType = (type) => {
+    setSelectedTypes(prev => prev.filter(t => t !== type));
+  };
 
   const selectedPokemon = selectedId ? pokemonData.pokemon[selectedId] : null;
 
@@ -86,32 +130,132 @@ export default function BrowseScreen({ pokemonData, onNavigate }) {
       )}
 
       {search.length < 2 && (
-        <div className="gen-list">
-          {GENERATIONS.map(gen => (
-            <div key={gen.id} className="gen-group">
-              <button
-                className={`gen-header ${expandedGen === gen.id ? 'expanded' : ''}`}
-                onClick={() => setExpandedGen(expandedGen === gen.id ? null : gen.id)}
-              >
-                <span>{gen.name}</span>
-                <span className="gen-count">{gen.range[1] - gen.range[0] + 1}</span>
-                <span className="gen-arrow">{expandedGen === gen.id ? '▾' : '▸'}</span>
-              </button>
-              {expandedGen === gen.id && (
-                <div className="gen-pokemon-grid">
-                  {allPokemon
-                    .filter(p => p.id >= gen.range[0] && p.id <= gen.range[1])
-                    .map(p => (
+        <>
+          <div className="browse-mode-tabs">
+            <button
+              className={`browse-tab ${browseMode === 'generation' ? 'active' : ''}`}
+              onClick={() => setBrowseMode('generation')}
+            >
+              By Generation
+            </button>
+            <button
+              className={`browse-tab ${browseMode === 'type' ? 'active' : ''}`}
+              onClick={() => setBrowseMode('type')}
+            >
+              By Type
+            </button>
+          </div>
+
+          {browseMode === 'generation' && (
+            <div className="gen-list">
+              {GENERATIONS.map(gen => (
+                <div key={gen.id} className="gen-group">
+                  <button
+                    className={`gen-header ${expandedGen === gen.id ? 'expanded' : ''}`}
+                    onClick={() => setExpandedGen(expandedGen === gen.id ? null : gen.id)}
+                  >
+                    <span>{gen.name}</span>
+                    <span className="gen-count">{gen.range[1] - gen.range[0] + 1}</span>
+                    <span className="gen-arrow">{expandedGen === gen.id ? '▾' : '▸'}</span>
+                  </button>
+                  {expandedGen === gen.id && (
+                    <div className="gen-pokemon-grid">
+                      {allPokemon
+                        .filter(p => p.id >= gen.range[0] && p.id <= gen.range[1])
+                        .map(p => (
+                          <div key={p.id} className="browse-card" onClick={() => setSelectedId(p.id)}>
+                            <PokemonImage id={p.id} size="small" alt={p.name} />
+                            <span className="browse-card-name">{p.name}</span>
+                          </div>
+                        ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {browseMode === 'type' && (
+            <div className="type-filter-section">
+              <div className="type-tags-input" ref={typeContainerRef}>
+                {selectedTypes.map(type => (
+                  <span
+                    key={type}
+                    className="type-tag"
+                    style={{ backgroundColor: TYPE_COLORS[type] }}
+                  >
+                    {type}
+                    <button
+                      className="type-tag-remove"
+                      onClick={() => removeType(type)}
+                    >
+                      &times;
+                    </button>
+                  </span>
+                ))}
+                <input
+                  ref={typeInputRef}
+                  type="text"
+                  className="type-tag-input"
+                  placeholder={selectedTypes.length === 0 ? 'Add types to filter...' : ''}
+                  value={typeSearch}
+                  onChange={e => {
+                    setTypeSearch(e.target.value);
+                    setTypeDropdownOpen(true);
+                  }}
+                  onFocus={() => setTypeDropdownOpen(true)}
+                  onKeyDown={e => {
+                    if (e.key === 'Backspace' && typeSearch === '' && selectedTypes.length > 0) {
+                      removeType(selectedTypes[selectedTypes.length - 1]);
+                    }
+                  }}
+                />
+                {typeDropdownOpen && filteredTypeOptions.length > 0 && (
+                  <div className="type-dropdown">
+                    {filteredTypeOptions.map(type => (
+                      <button
+                        key={type}
+                        className="type-dropdown-item"
+                        onMouseDown={e => e.preventDefault()}
+                        onClick={() => addType(type)}
+                      >
+                        <span
+                          className="type-dropdown-color"
+                          style={{ backgroundColor: TYPE_COLORS[type] }}
+                        />
+                        {type}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {selectedTypes.length > 0 && (
+                <>
+                  <p className="type-filter-count">
+                    {typeFilterResults.length} Pokémon found
+                  </p>
+                  <div className="gen-pokemon-grid">
+                    {typeFilterResults.map(p => (
                       <div key={p.id} className="browse-card" onClick={() => setSelectedId(p.id)}>
                         <PokemonImage id={p.id} size="small" alt={p.name} />
                         <span className="browse-card-name">{p.name}</span>
+                        <span className="browse-card-id">#{String(p.id).padStart(4, '0')}</span>
                       </div>
                     ))}
-                </div>
+                  </div>
+                  {typeFilterResults.length === 0 && (
+                    <p className="no-results">No Pokémon match all selected types.</p>
+                  )}
+                </>
+              )}
+
+              {selectedTypes.length === 0 && (
+                <p className="no-results">Select one or more types above to filter.</p>
               )}
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
     </div>
   );

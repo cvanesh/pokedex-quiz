@@ -1,9 +1,12 @@
+import { GENERATION_NAMES } from '../utils/constants.js';
 import TypeBadge from './TypeBadge.jsx';
 import StatBars from './StatBars.jsx';
 import EvolutionChain from './EvolutionChain.jsx';
 
 export default function PokemonDetail({ pokemon }) {
   if (!pokemon) return null;
+
+  const genName = GENERATION_NAMES[pokemon.generation] || `Gen ${pokemon.generation}`;
 
   return (
     <div className="pokemon-detail">
@@ -15,6 +18,7 @@ export default function PokemonDetail({ pokemon }) {
       </div>
 
       <p className="pokemon-genus">{pokemon.genus}</p>
+      <p className="pokemon-generation">{genName}</p>
 
       <div className="detail-types">
         {pokemon.types.map(t => <TypeBadge key={t} type={t} />)}
@@ -32,7 +36,10 @@ export default function PokemonDetail({ pokemon }) {
       </div>
 
       <div className="detail-section">
-        <h3>Base Stats</h3>
+        <div className="detail-section-header">
+          <h3>Base Stats</h3>
+          <span className="stat-total">{Object.values(pokemon.stats).reduce((a, b) => a + b, 0)}</span>
+        </div>
         <StatBars stats={pokemon.stats} />
       </div>
 

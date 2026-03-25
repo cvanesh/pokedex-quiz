@@ -39,4 +39,16 @@ export const STAT_COLORS = {
 
 export const QUIZ_COUNTS = [5, 10, 20, 50];
 
+export const GENERATION_NAMES = {
+  1: 'Gen I — Kanto',
+  2: 'Gen II — Johto',
+  3: 'Gen III — Hoenn',
+  4: 'Gen IV — Sinnoh',
+  5: 'Gen V — Unova',
+  6: 'Gen VI — Kalos',
+  7: 'Gen VII — Alola',
+  8: 'Gen VIII — Galar',
+  9: 'Gen IX — Paldea',
+};
+
 export const IMAGE_BASE_URL = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/';

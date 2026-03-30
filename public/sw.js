@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pokedex-quiz-v1';
+const CACHE_NAME = 'pokedex-quiz-v2';
 const APP_SHELL = [
   '/pokedex-quiz/',
   '/pokedex-quiz/index.html',
@@ -59,7 +59,31 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // App shell: cache-first
+  // HTML / app shell: network-first (always get latest build)
+  if (event.request.mode === 'navigate' || url.pathname.endsWith('.html') || url.pathname === '/pokedex-quiz/') {
+    event.respondWith(
+      fetch(event.request).then(response => {
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+        return response;
+      }).catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // JS/CSS assets (hashed filenames): network-first with cache fallback
+  if (url.pathname.match(/\.(js|css)$/)) {
+    event.respondWith(
+      fetch(event.request).then(response => {
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+        return response;
+      }).catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // Everything else: cache-first
   event.respondWith(
     caches.match(event.request).then(cached => cached || fetch(event.request))
   );

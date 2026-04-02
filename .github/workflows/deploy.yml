@@ -44,12 +44,9 @@ jobs:
         run: |
           mkdir -p public/images/full
           echo "Downloading 1025 full-size sprites..."
-          seq 1 1025 | xargs -P 20 -I {} sh -c '
-            if [ ! -f public/images/full/{}.png ]; then
-              curl -sL --retry 3 --retry-delay 1 -o public/images/full/{}.png \
-                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/{}.png" || echo "FAILED: {}"
-            fi
-          '
+          for i in $(seq 1 1025); do
+            echo "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${i}.png -o public/images/full/${i}.png"
+          done | xargs -P 20 -L 1 curl -sL --retry 3 --retry-delay 1
           echo "Downloaded $(ls public/images/full/*.png 2>/dev/null | wc -l) sprites"
 
       - name: Build app

@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { IMAGE_FULL_URL, IMAGE_THUMB_URL } from '../utils/constants.js';
+import { debugLog } from './DebugLog.jsx';
 
 const MAX_RETRIES = 3;
 
@@ -16,6 +17,8 @@ export default function PokemonImage({ id, size = 'large', alt = 'Pokémon' }) {
   const url = `${baseUrl}${id}.png`;
   const sizeClass = `pokemon-img-${size}`;
 
+  debugLog('img', `[IMG] mount id=${id} size=${size} url=${url}`);
+
   // Only start loading when the container scrolls into view
   useEffect(() => {
     const el = containerRef.current;
@@ -24,6 +27,7 @@ export default function PokemonImage({ id, size = 'large', alt = 'Pokémon' }) {
     // Large images (quiz/detail view) load immediately — no need to defer
     if (size === 'large') {
       setVisible(true);
+      debugLog('img', `[IMG] id=${id} visible immediately (large)`);
       return;
     }
 
@@ -31,6 +35,7 @@ export default function PokemonImage({ id, size = 'large', alt = 'Pokémon' }) {
       ([entry]) => {
         if (entry.isIntersecting) {
           setVisible(true);
+          debugLog('img', `[IMG] id=${id} now visible (intersected)`);
           observer.disconnect();
         }
       },
@@ -38,7 +43,7 @@ export default function PokemonImage({ id, size = 'large', alt = 'Pokémon' }) {
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, [size]);
+  }, [size, id]);
 
   // Clean up retry timer on unmount
   useEffect(() => {
@@ -47,9 +52,15 @@ export default function PokemonImage({ id, size = 'large', alt = 'Pokémon' }) {
     };
   }, []);
 
+  const handleLoad = useCallback(() => {
+    debugLog('img', `[IMG] id=${id} loaded OK — ${url}`);
+    setLoaded(true);
+  }, [id, url]);
+
   const handleError = useCallback(() => {
     if (retryCount.current < MAX_RETRIES) {
       retryCount.current += 1;
+      debugLog('warn', `[IMG] id=${id} failed, retry ${retryCount.current}/${MAX_RETRIES} — ${url}`);
       const delay = retryCount.current * 1000 + Math.random() * 500;
       retryTimer.current = setTimeout(() => {
         if (imgRef.current) {
@@ -58,9 +69,16 @@ export default function PokemonImage({ id, size = 'large', alt = 'Pokémon' }) {
         }
       }, delay);
     } else {
+      debugLog('error', `[IMG] id=${id} GAVE UP after ${MAX_RETRIES} retries — ${url}`);
+      // Try a direct fetch to get the HTTP status for debugging
+      fetch(url, { mode: 'no-cors' }).then(r => {
+        debugLog('error', `[IMG] id=${id} fetch status=${r.status} type=${r.type} url=${url}`);
+      }).catch(e => {
+        debugLog('error', `[IMG] id=${id} fetch error: ${e.message}`);
+      });
       setError(true);
     }
-  }, [url]);
+  }, [url, id]);
 
   return (
     <div ref={containerRef} className={`pokemon-image-container ${sizeClass}`}>
@@ -76,7 +94,7 @@ export default function PokemonImage({ id, size = 'large', alt = 'Pokémon' }) {
           src={url}
           alt={alt}
           className={`pokemon-img ${loaded ? 'loaded' : 'loading'}`}
-          onLoad={() => setLoaded(true)}
+          onLoad={handleLoad}
           onError={handleError}
           style={{ display: error ? 'none' : 'block' }}
         />

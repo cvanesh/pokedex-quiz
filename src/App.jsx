@@ -6,6 +6,7 @@ import BrowseScreen from './components/BrowseScreen.jsx';
 import ManualScreen from './components/ManualScreen.jsx';
 import SoloScreen from './components/SoloScreen.jsx';
 import PokeDialog from './components/PokeDialog.jsx';
+import DebugLog from './components/DebugLog.jsx';
 
 export default function App() {
   const [screen, setScreen] = useState('home');
@@ -154,6 +155,7 @@ export default function App() {
           onCancel={dialog.onCancel}
         />
       )}
+      <DebugLog />
     </div>
   );
 }

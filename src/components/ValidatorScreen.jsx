@@ -56,7 +56,7 @@ export default function ValidatorScreen({ phrase, count, pokemonData, onNavigate
         </button>
       </div>
       <div className="validator-image">
-        <PokemonImage id={pokemonId} size="large" alt={pokemon?.name || 'Pokémon'} />
+        <PokemonImage key={pokemonId} id={pokemonId} size="large" alt={pokemon?.name || 'Pokémon'} />
       </div>
       <div className="game-controls validator-controls">
         <button className="btn btn-correct" onClick={() => handleAnswer(true)}>

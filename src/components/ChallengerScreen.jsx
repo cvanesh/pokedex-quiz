@@ -50,7 +50,7 @@ export default function ChallengerScreen({ phrase, count, pokemonData, onNavigat
         </button>
       </div>
       <div className="game-main">
-        <PokemonImage id={pokemonId} size="large" alt="Who's that Pokémon?" />
+        <PokemonImage key={pokemonId} id={pokemonId} size="large" alt="Who's that Pokémon?" />
       </div>
       <div className="game-controls challenger-controls">
         <button className="btn btn-secondary" onClick={handlePrev} disabled={current === 0}>

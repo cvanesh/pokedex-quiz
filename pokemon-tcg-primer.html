@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pokémon TCG — The Complete Primer</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --poke-red: #E3350D;
+  --poke-blue: #3B4CCA;
+  --poke-yellow: #FFCB05;
+  --poke-gold: #B3A125;
+  --dark: #1a1a2e;
+  --darker: #0f0f1e;
+  --card-bg: #16213e;
+  --text: #e8e8e8;
+  --text-muted: #a0a0b8;
+  --grass: #78C850;
+  --fire: #F08030;
+  --water: #6890F0;
+  --lightning: #F8D030;
+  --psychic: #F85888;
+  --fighting: #C03028;
+  --darkness: #705848;
+  --metal: #B8B8D0;
+  --dragon: #7038F8;
+  --fairy: #EE99AC;
+  --colorless: #A8A878;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--darker);
+  color: var(--text);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ===== HEADER / HERO ===== */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: radial-gradient(ellipse at 30% 20%, rgba(59,76,202,0.35) 0%, transparent 50%),
+              radial-gradient(ellipse at 70% 80%, rgba(227,53,13,0.25) 0%, transparent 50%),
+              var(--darker);
+  padding: 2rem;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='8' fill='none' stroke='%23ffffff08' stroke-width='1'/%3E%3Cline x1='30' y1='0' x2='30' y2='22' stroke='%23ffffff05' stroke-width='1'/%3E%3Cline x1='30' y1='38' x2='30' y2='60' stroke='%23ffffff05' stroke-width='1'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.hero .pokeball-icon {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 2rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-15px) rotate(5deg); }
+}
+
+.hero h1 {
+  font-family: 'Bangers', cursive;
+  font-size: clamp(3rem, 8vw, 6rem);
+  letter-spacing: 4px;
+  color: var(--poke-yellow);
+  text-shadow: 3px 3px 0 var(--poke-blue), 6px 6px 0 rgba(0,0,0,0.3);
+  margin-bottom: 0.5rem;
+}
+
+.hero .subtitle {
+  font-size: 1.3rem;
+  color: var(--text-muted);
+  max-width: 600px;
+  margin-bottom: 2.5rem;
+  font-weight: 600;
+}
+
+.hero .scroll-hint {
+  position: absolute;
+  bottom: 2rem;
+  animation: bounce 2s infinite;
+  color: var(--poke-yellow);
+  font-size: 1.5rem;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(10px); }
+}
+
+/* ===== NAV ===== */
+.toc {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(15,15,30,0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid var(--poke-red);
+  padding: 0.8rem 1rem;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+
+.toc::-webkit-scrollbar { height: 3px; }
+.toc::-webkit-scrollbar-thumb { background: var(--poke-red); border-radius: 10px; }
+
+.toc-inner {
+  display: flex;
+  gap: 0.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.toc a {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  background: var(--card-bg);
+  color: var(--text-muted);
+  text-decoration: none;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  transition: all 0.3s;
+  border: 1px solid transparent;
+  flex-shrink: 0;
+}
+
+.toc a:hover {
+  color: var(--poke-yellow);
+  border-color: var(--poke-yellow);
+  background: rgba(255,203,5,0.1);
+}
+
+/* ===== MAIN CONTENT ===== */
+.content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.section {
+  margin-bottom: 4rem;
+  animation: fadeUp 0.6s ease-out;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section-number {
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  color: var(--poke-red);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+}
+
+.section h2 {
+  font-family: 'Bangers', cursive;
+  font-size: clamp(2rem, 5vw, 2.8rem);
+  color: var(--poke-yellow);
+  letter-spacing: 2px;
+  margin-bottom: 1.2rem;
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+}
+
+.section p {
+  margin-bottom: 1rem;
+  color: var(--text);
+  font-size: 1.05rem;
+}
+
+/* ===== CARD COMPONENTS ===== */
+.info-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  border-left: 4px solid var(--poke-red);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.info-card.blue { border-left-color: var(--poke-blue); }
+.info-card.yellow { border-left-color: var(--poke-yellow); }
+.info-card.green { border-left-color: var(--grass); }
+
+.info-card h3 {
+  font-family: 'Bangers', cursive;
+  font-size: 1.4rem;
+  color: var(--poke-yellow);
+  letter-spacing: 1px;
+  margin-bottom: 0.8rem;
+}
+
+.info-card p { color: var(--text-muted); font-size: 0.95rem; }
+
+/* ===== ENERGY GRID ===== */
+.energy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.energy-item {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  border: 2px solid transparent;
+  transition: all 0.3s;
+  cursor: default;
+}
+
+.energy-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+}
+
+.energy-dot {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin: 0 auto 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.energy-item .energy-name {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.energy-item .energy-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.3rem;
+}
+
+/* ===== STEP FLOW ===== */
+.step-flow {
+  position: relative;
+  margin: 2rem 0;
+}
+
+.step {
+  display: flex;
+  gap: 1.2rem;
+  margin-bottom: 1.8rem;
+  align-items: flex-start;
+}
+
+.step-num {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, var(--poke-red), #ff6b4a);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bangers', cursive;
+  font-size: 1.3rem;
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(227,53,13,0.4);
+}
+
+.step-content h4 {
+  font-family: 'Bangers', cursive;
+  font-size: 1.15rem;
+  color: var(--poke-yellow);
+  letter-spacing: 1px;
+  margin-bottom: 0.3rem;
+}
+
+.step-content p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+/* ===== TURN ACTION TABLE ===== */
+.action-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.95rem;
+}
+
+.action-table th {
+  background: var(--poke-blue);
+  color: #fff;
+  padding: 0.8rem 1rem;
+  text-align: left;
+  font-family: 'Bangers', cursive;
+  letter-spacing: 1px;
+  font-size: 1rem;
+}
+
+.action-table td {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  color: var(--text-muted);
+}
+
+.action-table tr:nth-child(even) td {
+  background: rgba(255,255,255,0.02);
+}
+
+.action-table .limit {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.limit-many { background: rgba(120,200,80,0.2); color: var(--grass); }
+.limit-one { background: rgba(240,128,48,0.2); color: var(--fire); }
+
+/* ===== STATUS CONDITIONS ===== */
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.status-card {
+  background: var(--card-bg);
+  border-radius: 14px;
+  padding: 1.2rem;
+  border-top: 3px solid;
+  transition: transform 0.3s;
+}
+
+.status-card:hover { transform: translateY(-3px); }
+
+.status-card h4 {
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+
+.status-card p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.status-card .marker {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-top: 0.5rem;
+}
+
+/* ===== WIN CONDITIONS ===== */
+.win-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.win-card {
+  background: linear-gradient(135deg, var(--card-bg), rgba(59,76,202,0.15));
+  border-radius: 14px;
+  padding: 1.5rem;
+  text-align: center;
+  border: 1px solid rgba(255,203,5,0.15);
+  transition: all 0.3s;
+}
+
+.win-card:hover {
+  border-color: var(--poke-yellow);
+  box-shadow: 0 0 30px rgba(255,203,5,0.1);
+}
+
+.win-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.win-card h4 {
+  font-family: 'Bangers', cursive;
+  color: var(--poke-yellow);
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+
+.win-card p { color: var(--text-muted); font-size: 0.9rem; }
+
+/* ===== DIAGRAM ===== */
+.play-area {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 2rem 1rem;
+  margin: 1.5rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.play-area::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: rgba(255,203,5,0.15);
+  z-index: 0;
+}
+
+.play-area h3 {
+  font-family: 'Bangers', cursive;
+  color: var(--poke-yellow);
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+  letter-spacing: 1px;
+  position: relative;
+  z-index: 1;
+}
+
+.player-side {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.zone {
+  background: rgba(255,255,255,0.05);
+  border: 2px dashed rgba(255,255,255,0.12);
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  text-align: center;
+  min-width: 90px;
+  transition: all 0.3s;
+}
+
+.zone:hover {
+  border-color: var(--poke-yellow);
+  background: rgba(255,203,5,0.05);
+}
+
+.zone-label {
+  font-weight: 800;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--poke-yellow);
+  margin-bottom: 0.3rem;
+}
+
+.zone-desc {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.zone.active {
+  border-color: var(--poke-red);
+  background: rgba(227,53,13,0.08);
+  border-style: solid;
+}
+
+.zone.active .zone-label { color: var(--poke-red); }
+
+.side-label {
+  text-align: center;
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== CARD TYPE SHOWCASE ===== */
+.card-types {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.card-type-box {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 1.5rem;
+  border-bottom: 4px solid;
+  transition: transform 0.3s;
+}
+
+.card-type-box:hover { transform: translateY(-4px); }
+
+.card-type-box h4 {
+  font-family: 'Bangers', cursive;
+  font-size: 1.3rem;
+  letter-spacing: 1px;
+  margin-bottom: 0.6rem;
+}
+
+.card-type-box p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.card-type-box .card-emoji {
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+}
+
+/* ===== GLOSSARY ACCORDION ===== */
+.glossary {
+  margin: 1.5rem 0;
+}
+
+.gloss-item {
+  background: var(--card-bg);
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+}
+
+.gloss-header {
+  padding: 1rem 1.2rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  color: var(--text);
+  transition: background 0.3s;
+}
+
+.gloss-header:hover { background: rgba(255,255,255,0.03); }
+
+.gloss-header .arrow {
+  transition: transform 0.3s;
+  color: var(--poke-yellow);
+}
+
+.gloss-item.open .arrow { transform: rotate(180deg); }
+
+.gloss-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+  padding: 0 1.2rem;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.gloss-item.open .gloss-body {
+  max-height: 300px;
+  padding-bottom: 1rem;
+}
+
+/* ===== TIP BOX ===== */
+.tip-box {
+  background: linear-gradient(135deg, rgba(255,203,5,0.1), rgba(59,76,202,0.1));
+  border: 1px solid rgba(255,203,5,0.2);
+  border-radius: 12px;
+  padding: 1.2rem 1.5rem;
+  margin: 1.5rem 0;
+  display: flex;
+  gap: 0.8rem;
+  align-items: flex-start;
+}
+
+.tip-box .tip-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.tip-box p {
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  .energy-grid { grid-template-columns: repeat(3, 1fr); }
+  .status-grid, .win-grid, .card-types { grid-template-columns: 1fr; }
+  .play-area { padding: 1.5rem 0.8rem; }
+  .zone { min-width: 70px; padding: 0.5rem 0.6rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <svg class="pokeball-icon" viewBox="0 0 120 120">
+    <circle cx="60" cy="60" r="56" fill="none" stroke="#E3350D" stroke-width="4"/>
+    <path d="M4,60 H50 A10,10 0 0,1 70,60 H116" stroke="#E3350D" stroke-width="4" fill="none"/>
+    <circle cx="60" cy="60" r="12" fill="none" stroke="#E3350D" stroke-width="4"/>
+    <circle cx="60" cy="60" r="5" fill="#FFCB05"/>
+    <path d="M4,60 Q60,5 116,60" fill="#E3350D" opacity="0.3"/>
+  </svg>
+  <h1>Pokémon TCG</h1>
+  <p class="subtitle">The complete beginner's primer — everything you need to sit down and play with confidence, even if you've never heard of Pokémon before.</p>
+  <div class="scroll-hint">▼</div>
+</section>
+
+<!-- ===== NAV ===== -->
+<nav class="toc">
+  <div class="toc-inner">
+    <a href="#what">What Is Pokémon?</a>
+    <a href="#history">History</a>
+    <a href="#cards">Card Types</a>
+    <a href="#energy">Energy Types</a>
+    <a href="#anatomy">Card Anatomy</a>
+    <a href="#setup">Game Setup</a>
+    <a href="#turns">Turn Structure</a>
+    <a href="#attacking">Attacking</a>
+    <a href="#weakness">Weakness &amp; Resistance</a>
+    <a href="#status">Status Conditions</a>
+    <a href="#winning">How to Win</a>
+    <a href="#glossary">Quick Glossary</a>
+  </div>
+</nav>
+
+<!-- ===== CONTENT ===== -->
+<main class="content">
+
+  <!-- SECTION 1: WHAT IS POKEMON -->
+  <section class="section" id="what">
+    <div class="section-number">Chapter 01</div>
+    <h2>What Is Pokémon?</h2>
+    <p>Pokémon (short for "Pocket Monsters") is a fictional universe created in Japan in 1996 by game designer Satoshi Tajiri and illustrator Ken Sugimori. In this world, humans known as <strong>Trainers</strong> capture and befriend creatures called <strong>Pokémon</strong> — each with unique abilities, elemental powers, and personalities.</p>
+    <p>There are over 1,000 different species of Pokémon. Some breathe fire, some control water, some create electricity, and many evolve into stronger forms as they grow. Think of it as a world where wildlife has superpowers and people build teams of them to compete in friendly battles.</p>
+    <p>The franchise spans video games, an animated TV series, movies, toys, and — most relevant to us — a <strong>Trading Card Game (TCG)</strong>. In the card game, you play as a Pokémon Trainer, using a deck of cards to battle another Trainer's team.</p>
+
+    <div class="info-card blue">
+      <h3>Why People Love It</h3>
+      <p>The TCG blends strategic depth with accessible rules. Building a deck is creative and personal — you choose which creatures and strategies represent you. Games are fast (usually 15–25 minutes) and every match unfolds differently based on what cards you draw and how you respond to your opponent.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 2: HISTORY -->
+  <section class="section" id="history">
+    <div class="section-number">Chapter 02</div>
+    <h2>A Brief History</h2>
+    <p>The Pokémon TCG launched in Japan on October 20, 1996, published by Media Factory and developed by Creatures Inc. It was built on the runaway success of the Pokémon Red and Green video games for the Game Boy. The first set — the "Base Set" — featured 102 cards with iconic creatures like Charizard, Blastoise, and Pikachu.</p>
+    <p>In January 1999, Wizards of the Coast (the company behind Magic: The Gathering) brought the card game to North America. Timing was perfect — "Pokémania" was at fever pitch with the animated TV series airing worldwide, and the card game became an instant cultural phenomenon.</p>
+    <p>Since then, the game has continuously evolved. New expansion sets, mechanics, and Pokémon are introduced regularly alongside each new generation of video games. As of 2025, over 75 billion cards have been produced worldwide in 16 languages, and the game is sold in over 90 countries. It remains one of the most popular trading card games ever created.</p>
+
+    <div class="tip-box">
+      <div class="tip-icon">💡</div>
+      <p>The rarest Pokémon card is the "Pikachu Illustrator," originally created as a prize for a 1997 Japanese art contest. Only about 41 were ever printed, and one sold for $16.5 million in February 2026.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 3: CARD TYPES -->
+  <section class="section" id="cards">
+    <div class="section-number">Chapter 03</div>
+    <h2>The Three Types of Cards</h2>
+    <p>Every 60-card deck is built from exactly three types of cards. Understanding what each does is the foundation of everything.</p>
+
+    <div class="card-types">
+      <div class="card-type-box" style="border-color: var(--poke-red);">
+        <div class="card-emoji">🐉</div>
+        <h4 style="color: var(--poke-red);">Pokémon Cards</h4>
+        <p>Your battlers. Each has Hit Points (HP), one or more attacks, a type (like Fire or Water), and sometimes special Abilities. They come in three stages: <strong>Basic</strong> (played directly from your hand), <strong>Stage 1</strong> (evolves from a Basic), and <strong>Stage 2</strong> (evolves from a Stage 1). You must always have at least one Pokémon in play.</p>
+      </div>
+      <div class="card-type-box" style="border-color: var(--poke-yellow);">
+        <div class="card-emoji">⚡</div>
+        <h4 style="color: var(--poke-yellow);">Energy Cards</h4>
+        <p>The fuel for your Pokémon's attacks. You attach Energy cards from your hand to your Pokémon to power their moves. Each attack lists its Energy cost — you need to match those symbols. <strong>Basic Energy</strong> has no limit per deck. <strong>Special Energy</strong> provides extra effects but is limited to 4 copies.</p>
+      </div>
+      <div class="card-type-box" style="border-color: var(--poke-blue);">
+        <div class="card-emoji">🎒</div>
+        <h4 style="color: var(--poke-blue);">Trainer Cards</h4>
+        <p>Items, tools, and allies that support your strategy. They come in subtypes: <strong>Item</strong> cards (play as many as you want), <strong>Supporter</strong> cards (only one per turn — these are powerful), <strong>Stadium</strong> cards (one per turn — affects both players), and <strong>Pokémon Tools</strong> (attach to a Pokémon for ongoing effects).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: ENERGY TYPES -->
+  <section class="section" id="energy">
+    <div class="section-number">Chapter 04</div>
+    <h2>Energy Types</h2>
+    <p>Pokémon and their attacks are categorized by elemental types. There are 11 Energy types in the TCG. Each type has strengths and weaknesses against others, echoing a "rock-paper-scissors" dynamic that adds strategic depth to deck building.</p>
+
+    <div class="energy-grid">
+      <div class="energy-item" style="border-color: var(--grass);">
+        <div class="energy-dot" style="background: var(--grass);">🌿</div>
+        <div class="energy-name" style="color: var(--grass);">Grass</div>
+        <div class="energy-desc">Plants, bugs, forests</div>
+      </div>
+      <div class="energy-item" style="border-color: var(--fire);">
+        <div class="energy-dot" style="background: var(--fire);">🔥</div>
+        <div class="energy-name" style="color: var(--fire);">Fire</div>
+        <div class="energy-desc">Flames, heat, volcanoes</div>
+      </div>
+      <div class="energy-item" style="border-color: var(--water);">
+        <div class="energy-dot" style="background: var(--water);">💧</div>
+        <div class="energy-name" style="color: var(--water);">Water</div>
+        <div class="energy-desc">Oceans, ice, rain</div>
+      </div>
+      <div class="energy-item" style="border-color: var(--lightning);">
+        <div class="energy-dot" style="background: var(--lightning); color: #333;">⚡</div>
+        <div class="energy-name" style="color: var(--lightning);">Lightning</div>
+        <div class="energy-desc">Electricity, storms</div>
+      </div>
+      <div class="energy-item" style="border-color: var(--psychic);">
+        <div class="energy-dot" style="background: var(--psychic);">🔮</div>
+        <div class="energy-name" style="color: var(--psychic);">Psychic</div>
+        <div class="energy-desc">Mind, ghosts, poison</div>
+      </div>
+      <div class="energy-item" style="border-color: var(--fighting);">
+        <div class="energy-dot" style="background: var(--fighting);">👊</div>
+        <div class="energy-name" style="color: var(--fighting);">Fighting</div>
+        <div class="energy-desc">Martial arts, rocks, earth</div>
+      </div>
+      <div class="energy-item" style="border-color: var(--darkness);">
+        <div class="energy-dot" style="background: var(--darkness);">🌑</div>
+        <div class="energy-name" style="color: #a08878;">Darkness</div>
+        <div class="energy-desc">Shadows, trickery</div>
+      </div>
+      <div class="energy-item" style="border-color: var(--metal);">
+        <div class="energy-dot" style="background: var(--metal); color: #333;">⚙️</div>
+        <div class="energy-name" style="color: var(--metal);">Metal</div>
+        <div class="energy-desc">Steel, armor, machines</div>
+      </div>
+      <div class="energy-item" style="border-color: var(--dragon);">
+        <div class="energy-dot" style="background: var(--dragon);">🐲</div>
+        <div class="energy-name" style="color: var(--dragon);">Dragon</div>
+        <div class="energy-desc">Mythical, multi-type cost</div>
+      </div>
+      <div class="energy-item" style="border-color: var(--fairy);">
+        <div class="energy-dot" style="background: var(--fairy);">✨</div>
+        <div class="energy-name" style="color: var(--fairy);">Fairy</div>
+        <div class="energy-desc">Magic, charm (legacy)</div>
+      </div>
+      <div class="energy-item" style="border-color: var(--colorless);">
+        <div class="energy-dot" style="background: var(--colorless); color: #333;">⭐</div>
+        <div class="energy-name" style="color: var(--colorless);">Colorless</div>
+        <div class="energy-desc">Neutral — any Energy works</div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="tip-icon">💡</div>
+      <p><strong>Colorless is special:</strong> When an attack cost shows a Colorless symbol (the white star), you can pay it with <em>any</em> type of Energy. There are no Basic Colorless or Dragon Energy cards — Dragon-type Pokémon use other Energy types for their attacks.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 5: CARD ANATOMY -->
+  <section class="section" id="anatomy">
+    <div class="section-number">Chapter 05</div>
+    <h2>Reading a Pokémon Card</h2>
+    <p>Every Pokémon card packs a lot of information into a small space. Here's what each part means, from top to bottom:</p>
+
+    <div class="info-card">
+      <h3>Top of the Card</h3>
+      <p><strong>Name</strong> — the Pokémon's name and any special designation (like "ex" or "V"). The <strong>Stage</strong> (Basic, Stage 1, Stage 2) is in the upper left. The <strong>HP</strong> (Hit Points) is in the upper right — this is how much damage the Pokémon can take before being Knocked Out. The <strong>Type symbol</strong> beside HP tells you the Pokémon's elemental type.</p>
+    </div>
+    <div class="info-card blue">
+      <h3>Middle of the Card</h3>
+      <p>The card's <strong>artwork</strong> dominates the center. Below it, you'll find the Pokémon's <strong>Abilities</strong> (special powers that are always active or triggered without attacking) and its <strong>Attacks</strong>. Each attack shows: the <strong>Energy cost</strong> (symbols on the left), the <strong>attack name</strong>, the <strong>damage number</strong> (on the right), and a text description of any extra effects.</p>
+    </div>
+    <div class="info-card yellow">
+      <h3>Bottom of the Card</h3>
+      <p><strong>Weakness</strong> — a type symbol showing which type deals double damage to this Pokémon. <strong>Resistance</strong> — a type symbol with "−30" showing which type deals reduced damage. <strong>Retreat Cost</strong> — the number of Energy you must discard from this Pokémon to swap it to your Bench. These three items appear in a row at the card's bottom.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 6: GAME SETUP -->
+  <section class="section" id="setup">
+    <div class="section-number">Chapter 06</div>
+    <h2>Setting Up the Game</h2>
+    <p>Before the battle begins, both players prepare the field. Here's the step-by-step:</p>
+
+    <div class="step-flow">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Shake Hands & Shuffle</h4>
+          <p>Both players shuffle their 60-card decks thoroughly. A coin flip determines who goes first (the first player cannot attack on their first turn).</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Draw 7 Cards</h4>
+          <p>Each player draws 7 cards as their opening hand. Don't show your hand to your opponent.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Place Your Active Pokémon</h4>
+          <p>Choose 1 Basic Pokémon from your hand and place it face-down in your Active Spot. If you have no Basic Pokémon, reveal your hand, shuffle it back, and draw 7 new cards. Your opponent gets to draw 1 extra card each time this happens.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h4>Fill Your Bench (Optional)</h4>
+          <p>You may place any additional Basic Pokémon from your hand face-down on your Bench (up to 5 Pokémon on the Bench).</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <h4>Set Aside Prize Cards</h4>
+          <p>Each player takes the top 6 cards of their deck and places them face-down to the side as <strong>Prize Cards</strong>. You don't look at these — they're your rewards for Knocking Out opposing Pokémon.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <h4>Flip Cards & Begin!</h4>
+          <p>Both players flip their Pokémon face-up. The game starts — the first player draws a card and begins their turn.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PLAY AREA DIAGRAM -->
+    <div class="play-area">
+      <h3>⬇ Your Play Area Layout ⬇</h3>
+      <div class="side-label">— OPPONENT'S SIDE —</div>
+      <div class="player-side">
+        <div class="zone"><div class="zone-label">Deck</div><div class="zone-desc">Draw pile</div></div>
+        <div class="zone"><div class="zone-label">Prize Cards</div><div class="zone-desc">6 face-down</div></div>
+        <div class="zone active"><div class="zone-label">Active Spot</div><div class="zone-desc">Their battler</div></div>
+        <div class="zone"><div class="zone-label">Bench</div><div class="zone-desc">Up to 5 backup</div></div>
+        <div class="zone"><div class="zone-label">Discard</div><div class="zone-desc">Used cards</div></div>
+      </div>
+      <div class="side-label" style="margin-top: 1.5rem;">— YOUR SIDE —</div>
+      <div class="player-side">
+        <div class="zone"><div class="zone-label">Discard</div><div class="zone-desc">Used cards</div></div>
+        <div class="zone"><div class="zone-label">Bench</div><div class="zone-desc">Up to 5 backup</div></div>
+        <div class="zone active"><div class="zone-label">Active Spot</div><div class="zone-desc">Your battler</div></div>
+        <div class="zone"><div class="zone-label">Prize Cards</div><div class="zone-desc">6 face-down</div></div>
+        <div class="zone"><div class="zone-label">Deck</div><div class="zone-desc">Draw pile</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 7: TURN STRUCTURE -->
+  <section class="section" id="turns">
+    <div class="section-number">Chapter 07</div>
+    <h2>What You Do on Your Turn</h2>
+    <p>Every turn follows three phases: <strong>Draw</strong>, <strong>Do Things</strong>, and <strong>Attack</strong>. The middle phase is where most of the strategy happens.</p>
+
+    <div class="info-card green">
+      <h3>Phase 1 — Draw a Card</h3>
+      <p>You must draw exactly one card from the top of your deck. This is mandatory. If your deck is empty and you can't draw, you lose the game immediately.</p>
+    </div>
+
+    <div class="info-card blue">
+      <h3>Phase 2 — Do Things (in any order)</h3>
+      <p>This is the action phase. You can do any combination of the following, in any order:</p>
+    </div>
+
+    <table class="action-table">
+      <thead>
+        <tr><th>Action</th><th>Limit</th><th>Details</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Play Basic Pokémon to Bench</strong></td>
+          <td><span class="limit limit-many">As many as you want</span></td>
+          <td>Place Basic Pokémon from your hand onto your Bench (max 5 Benched Pokémon)</td>
+        </tr>
+        <tr>
+          <td><strong>Evolve Pokémon</strong></td>
+          <td><span class="limit limit-many">As many as you want</span></td>
+          <td>Play a Stage 1 or Stage 2 on top of the matching Pokémon in play. Can't evolve a Pokémon on its first turn in play, or on your first turn of the game</td>
+        </tr>
+        <tr>
+          <td><strong>Attach Energy</strong></td>
+          <td><span class="limit limit-one">Once per turn</span></td>
+          <td>Take one Energy card from your hand and attach it to any of your Pokémon (Active or Benched)</td>
+        </tr>
+        <tr>
+          <td><strong>Play Item Cards</strong></td>
+          <td><span class="limit limit-many">As many as you want</span></td>
+          <td>Follow the card's instructions, then discard it</td>
+        </tr>
+        <tr>
+          <td><strong>Play a Supporter Card</strong></td>
+          <td><span class="limit limit-one">Once per turn</span></td>
+          <td>Powerful effects — only one Supporter per turn</td>
+        </tr>
+        <tr>
+          <td><strong>Play a Stadium Card</strong></td>
+          <td><span class="limit limit-one">Once per turn</span></td>
+          <td>Stays in play and affects both players. A new Stadium replaces the old one</td>
+        </tr>
+        <tr>
+          <td><strong>Use Abilities</strong></td>
+          <td><span class="limit limit-many">As many as you want</span></td>
+          <td>Some Pokémon have Abilities — special powers that aren't attacks. Read each card for details</td>
+        </tr>
+        <tr>
+          <td><strong>Retreat your Active Pokémon</strong></td>
+          <td><span class="limit limit-one">Once per turn</span></td>
+          <td>Discard Energy equal to the Retreat Cost, then swap in a Benched Pokémon</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="info-card">
+      <h3>Phase 3 — Attack</h3>
+      <p>Declare one of your Active Pokémon's attacks (if it has enough Energy attached). Apply the damage and any effects. <strong>Your turn is now over.</strong> You can't do any Phase 2 actions after attacking. If you can't or don't want to attack, your turn simply ends.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 8: ATTACKING -->
+  <section class="section" id="attacking">
+    <div class="section-number">Chapter 08</div>
+    <h2>How Attacking Works</h2>
+    <p>Attacking is the climax of your turn. Here's how to resolve it step by step:</p>
+
+    <div class="step-flow">
+      <div class="step">
+        <div class="step-num">A</div>
+        <div class="step-content">
+          <h4>Check Energy</h4>
+          <p>Make sure your Active Pokémon has enough Energy attached to pay for the attack you want to use. The Energy stays attached — it doesn't get used up (unless the attack says otherwise).</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">B</div>
+        <div class="step-content">
+          <h4>Check Weakness & Resistance</h4>
+          <p>Look at the <em>defending</em> Pokémon (your opponent's Active). If it's <strong>Weak</strong> to your attacker's type, double the damage. If it's <strong>Resistant</strong>, subtract 30.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">C</div>
+        <div class="step-content">
+          <h4>Place Damage Counters</h4>
+          <p>Put damage counters on the defending Pokémon equal to the final damage (each counter = 10 HP). If total damage on a Pokémon equals or exceeds its HP, it's <strong>Knocked Out</strong>.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">D</div>
+        <div class="step-content">
+          <h4>Knock Out & Prizes</h4>
+          <p>When you Knock Out an opponent's Pokémon, it and all attached cards go to their discard pile. You take one of your Prize Cards into your hand. Your opponent must promote a Benched Pokémon to the Active Spot.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="tip-icon">⚠️</div>
+      <p><strong>Important:</strong> Only your Active Pokémon can attack, and it can only attack the opponent's Active Pokémon (unless an attack specifically says it targets the Bench). The first player of the game cannot attack on their very first turn.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 9: WEAKNESS & RESISTANCE -->
+  <section class="section" id="weakness">
+    <div class="section-number">Chapter 09</div>
+    <h2>Weakness & Resistance</h2>
+    <p>These are printed on each Pokémon card in the lower-left area. They add a layer of strategy based on type matchups — similar to how water puts out fire in the real world.</p>
+
+    <div class="info-card">
+      <h3>⚠️ Weakness (×2)</h3>
+      <p>If your Pokémon has a Weakness to a type, attacks from Pokémon of that type deal <strong>double damage</strong>. For example, if a Grass-type Pokémon is weak to Fire, a Fire Pokémon's 60-damage attack would deal 120 damage instead. This is devastating and often results in a one-hit knockout.</p>
+    </div>
+
+    <div class="info-card green">
+      <h3>🛡️ Resistance (−30)</h3>
+      <p>If your Pokémon has a Resistance to a type, attacks from that type deal <strong>30 less damage</strong>. A 100-damage attack becomes 70. Not all Pokémon have Resistance — many cards leave this blank. Weakness is applied first, then Resistance. Both only apply to Active Pokémon.</p>
+    </div>
+
+    <div class="tip-box">
+      <div class="tip-icon">💡</div>
+      <p><strong>Key rule:</strong> Weakness and Resistance are based on the <em>attacking Pokémon's type</em>, not the type of Energy used to pay for the attack. A Water-type Pokémon attacking with an attack that costs Colorless Energy still counts as a Water-type attack.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 10: STATUS CONDITIONS -->
+  <section class="section" id="status">
+    <div class="section-number">Chapter 10</div>
+    <h2>Special Conditions (Status Effects)</h2>
+    <p>Certain attacks and Abilities can inflict Special Conditions on a Pokémon, impairing its ability to fight. There are five conditions. Between each turn, there is a "Pokémon Checkup" phase where condition effects are resolved.</p>
+    <p>You can cure any Special Condition by: retreating to the Bench, evolving the Pokémon, or using certain Item/Ability effects.</p>
+
+    <div class="status-grid">
+      <div class="status-card" style="border-color: #9b59b6;">
+        <h4 style="color: #9b59b6;">☠️ Poisoned</h4>
+        <p>Place a Poison marker on the Pokémon. During every Pokémon Checkup, it takes 1 damage counter (10 damage). Poison doesn't go away on its own — you must cure it.</p>
+        <div class="marker" style="background: rgba(155,89,182,0.2); color: #9b59b6;">Marker: green skull token</div>
+      </div>
+      <div class="status-card" style="border-color: var(--fire);">
+        <h4 style="color: var(--fire);">🔥 Burned</h4>
+        <p>Place a Burn marker. During Checkup, put 2 damage counters (20 damage) on it, then flip a coin — heads cures the Burn, tails means it stays.</p>
+        <div class="marker" style="background: rgba(240,128,48,0.2); color: var(--fire);">Marker: red/orange token</div>
+      </div>
+      <div class="status-card" style="border-color: var(--water);">
+        <h4 style="color: var(--water);">😴 Asleep</h4>
+        <p>Turn the card sideways (counterclockwise). The Pokémon can't attack or retreat. During Checkup, flip a coin — heads wakes it up, tails stays Asleep.</p>
+        <div class="marker" style="background: rgba(104,144,240,0.2); color: var(--water);">Shown by: card rotated left</div>
+      </div>
+      <div class="status-card" style="border-color: var(--lightning);">
+        <h4 style="color: var(--lightning);">⚡ Paralyzed</h4>
+        <p>Turn the card sideways (clockwise). The Pokémon can't attack or retreat. It auto-recovers at the end of its owner's next turn during Checkup.</p>
+        <div class="marker" style="background: rgba(248,208,48,0.2); color: var(--lightning);">Shown by: card rotated right</div>
+      </div>
+      <div class="status-card" style="border-color: #e67e22;">
+        <h4 style="color: #e67e22;">😵 Confused</h4>
+        <p>Turn the card upside-down. When a Confused Pokémon tries to attack, flip a coin — heads means the attack proceeds normally, tails cancels the attack and the Pokémon takes 3 damage counters (30 damage) to itself.</p>
+        <div class="marker" style="background: rgba(230,126,34,0.2); color: #e67e22;">Shown by: card flipped upside-down</div>
+      </div>
+    </div>
+
+    <div class="info-card blue">
+      <h3>Stacking Rules</h3>
+      <p><strong>Poisoned</strong> and <strong>Burned</strong> can coexist with each other and with any other condition. However, <strong>Asleep</strong>, <strong>Paralyzed</strong>, and <strong>Confused</strong> are mutually exclusive — they all use card rotation to indicate their status, so a new one replaces the old one. A Pokémon could theoretically be Poisoned, Burned, <em>and</em> Paralyzed all at once.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 11: WINNING -->
+  <section class="section" id="winning">
+    <div class="section-number">Chapter 11</div>
+    <h2>How to Win the Game</h2>
+    <p>There are three separate ways to win. You only need to achieve one of them:</p>
+
+    <div class="win-grid">
+      <div class="win-card">
+        <div class="win-icon">🏆</div>
+        <h4>Take All Prize Cards</h4>
+        <p>Every time you Knock Out an opponent's Pokémon, you take one of your 6 Prize Cards. Take your sixth and final Prize Card, and you win. This is the most common path to victory.</p>
+      </div>
+      <div class="win-card">
+        <div class="win-icon">💨</div>
+        <h4>Wipe Out All Pokémon</h4>
+        <p>If you Knock Out your opponent's Active Pokémon and they have no Benched Pokémon to replace it, you win immediately — even if you haven't taken all your Prizes yet.</p>
+      </div>
+      <div class="win-card">
+        <div class="win-icon">📭</div>
+        <h4>Deck Out Your Opponent</h4>
+        <p>At the start of each turn, a player <em>must</em> draw a card. If their deck is empty and they can't draw, they lose. Running someone out of cards is a rarer but legitimate strategy.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 12: GLOSSARY -->
+  <section class="section" id="glossary">
+    <div class="section-number">Chapter 12</div>
+    <h2>Quick Glossary</h2>
+    <p>Key terms you'll hear during a game — tap any term to expand it:</p>
+
+    <div class="glossary">
+      <div class="gloss-item">
+        <div class="gloss-header" onclick="toggleGloss(this)">Active Spot <span class="arrow">▼</span></div>
+        <div class="gloss-body">The position where your main battling Pokémon sits. You must always have one Pokémon in the Active Spot. Only the Active Pokémon can attack or be attacked (normally).</div>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-header" onclick="toggleGloss(this)">Bench <span class="arrow">▼</span></div>
+        <div class="gloss-body">The area behind the Active Spot where up to 5 additional Pokémon wait. Benched Pokémon can receive Energy and evolve, but they can't attack. When your Active Pokémon is Knocked Out, you promote one from the Bench.</div>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-header" onclick="toggleGloss(this)">Evolve <span class="arrow">▼</span></div>
+        <div class="gloss-body">Playing a higher-stage Pokémon card on top of a matching lower-stage one. For example, placing "Charmeleon" (Stage 1) on top of "Charmander" (Basic). Evolving keeps all attached Energy and damage counters but clears Special Conditions. You can't evolve a Pokémon on the same turn it was played or on the first turn of the game.</div>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-header" onclick="toggleGloss(this)">Knocked Out (KO) <span class="arrow">▼</span></div>
+        <div class="gloss-body">When a Pokémon has damage equal to or greater than its HP, it's Knocked Out. It and all cards attached go to the discard pile. The player who scored the KO takes a Prize Card.</div>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-header" onclick="toggleGloss(this)">Retreat <span class="arrow">▼</span></div>
+        <div class="gloss-body">Moving your Active Pokémon to the Bench and replacing it with a Benched one. You must discard Energy cards from the retreating Pokémon equal to its Retreat Cost (shown at the bottom of the card). You may only retreat once per turn.</div>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-header" onclick="toggleGloss(this)">Prize Cards <span class="arrow">▼</span></div>
+        <div class="gloss-body">The 6 face-down cards set aside during setup. You don't know what they are until you take them. Each KO earns you one Prize Card (some powerful Pokémon give up 2 or 3 when Knocked Out). Take your last Prize Card to win.</div>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-header" onclick="toggleGloss(this)">Pokémon Checkup <span class="arrow">▼</span></div>
+        <div class="gloss-body">A between-turns step after one player attacks but before the next player draws. During this step, Special Condition effects are resolved in order: Poisoned → Burned → Asleep → Paralyzed. Both players check their Pokémon during this phase.</div>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-header" onclick="toggleGloss(this)">Damage Counter <span class="arrow">▼</span></div>
+        <div class="gloss-body">A token (or die) placed on a Pokémon to track damage. Each counter represents 10 damage. When total counters × 10 equal or exceed a Pokémon's HP, it's Knocked Out. Dice are commonly used as counters in casual play.</div>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-header" onclick="toggleGloss(this)">Ability <span class="arrow">▼</span></div>
+        <div class="gloss-body">A special power printed on some Pokémon cards that provides an effect separate from attacks. Abilities may be activated once per turn, be always-on, or trigger under certain conditions. Unlike attacks, using an Ability doesn't end your turn.</div>
+      </div>
+      <div class="gloss-item">
+        <div class="gloss-header" onclick="toggleGloss(this)">Rule of Four <span class="arrow">▼</span></div>
+        <div class="gloss-body">You can only have up to 4 copies of any card with the same name in your deck — with the exception of Basic Energy cards, which have no limit. Special cards like ACE SPEC are limited to just 1 copy per deck.</div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="tip-icon">🎮</div>
+      <p><strong>Getting started:</strong> The best way to learn is by playing! Pick up a pre-built "Battle Deck" or "Trainer Kit" (around $15), which comes with two ready-to-play 60-card decks and a step-by-step rules guide. You can also try the free digital version, Pokémon TCG Live, which has a built-in tutorial.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Guide created for beginners. Based on official Pokémon TCG rules.<br>
+  Pokémon is a trademark of Nintendo / Creatures Inc. / GAME FREAK Inc.
+</footer>
+
+<script>
+function toggleGloss(el) {
+  const item = el.parentElement;
+  item.classList.toggle('open');
+}
+
+// Smooth scroll for TOC
+document.querySelectorAll('.toc a').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+// Intersection observer for fade-in
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.animation = 'fadeUp 0.6s ease-out forwards';
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.section').forEach(s => {
+  s.style.opacity = '0';
+  observer.observe(s);
+});
+</script>
+</body>
+</html>

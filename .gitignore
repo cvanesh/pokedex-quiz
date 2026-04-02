@@ -4,3 +4,5 @@ data/
 public/pokemon-data.json
 .DS_Store
 *.log
+debug/
+public/images/full/

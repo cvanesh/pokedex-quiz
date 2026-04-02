@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pokedex-quiz-v2';
+const CACHE_NAME = 'pokedex-quiz-v1';
 const APP_SHELL = [
   '/pokedex-quiz/',
   '/pokedex-quiz/index.html',
@@ -22,11 +22,27 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
+// Listen for cache-clear messages from the app
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'CLEAR_CACHE') {
+    caches.keys().then(keys =>
+      Promise.all(keys.map(k => caches.delete(k)))
+    ).then(() => {
+      // Re-cache the app shell
+      caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL));
+      // Notify all clients
+      self.clients.matchAll().then(clients => {
+        clients.forEach(client => client.postMessage({ type: 'CACHE_CLEARED' }));
+      });
+    });
+  }
+});
+
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
-  // Pokémon images: cache-first (once downloaded, always available offline)
-  if (url.hostname === 'raw.githubusercontent.com') {
+  // Pokémon images: cache-first (local, served from /images/)
+  if (url.pathname.startsWith('/pokedex-quiz/images/')) {
     event.respondWith(
       caches.match(event.request).then(cached => {
         if (cached) return cached;
@@ -36,7 +52,7 @@ self.addEventListener('fetch', event => {
             caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
           }
           return response;
-        }).catch(() => new Response('', { status: 404 }));
+        });
       })
     );
     return;
@@ -59,31 +75,7 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // HTML / app shell: network-first (always get latest build)
-  if (event.request.mode === 'navigate' || url.pathname.endsWith('.html') || url.pathname === '/pokedex-quiz/') {
-    event.respondWith(
-      fetch(event.request).then(response => {
-        const clone = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-        return response;
-      }).catch(() => caches.match(event.request))
-    );
-    return;
-  }
-
-  // JS/CSS assets (hashed filenames): network-first with cache fallback
-  if (url.pathname.match(/\.(js|css)$/)) {
-    event.respondWith(
-      fetch(event.request).then(response => {
-        const clone = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-        return response;
-      }).catch(() => caches.match(event.request))
-    );
-    return;
-  }
-
-  // Everything else: cache-first
+  // App shell: cache-first
   event.respondWith(
     caches.match(event.request).then(cached => cached || fetch(event.request))
   );

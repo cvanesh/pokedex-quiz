@@ -4,8 +4,10 @@ import { WORDLIST } from '../utils/wordlist.js';
 import { QUIZ_COUNTS } from '../utils/constants.js';
 
 export default function HomeScreen({ onNavigate }) {
-  const [mode, setMode] = useState(null); // null | 'start' | 'enter'
+  const [mode, setMode] = useState(null); // null | 'start' | 'enter' | 'settings'
+  const [clearing, setClearing] = useState(false);
   const [selectedCount, setSelectedCount] = useState(null);
+  const [challengeFriend, setChallengeFriend] = useState(false);
   const [generatedPhrase, setGeneratedPhrase] = useState('');
   const [copied, setCopied] = useState(false);
   const [codeWords, setCodeWords] = useState(['', '', '']);
@@ -13,11 +15,34 @@ export default function HomeScreen({ onNavigate }) {
   const [enterCount, setEnterCount] = useState(null);
   const wordInputRefs = [useRef(null), useRef(null), useRef(null)];
 
+  const handleClearCache = async () => {
+    setClearing(true);
+    try {
+      // Clear all caches
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => caches.delete(k)));
+      // Tell the service worker to clear and re-cache
+      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({ type: 'CLEAR_CACHE' });
+      }
+      // Unregister service worker so it re-installs fresh
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(registrations.map(r => r.unregister()));
+      // Hard refresh
+      window.location.reload(true);
+    } catch (err) {
+      console.error('Failed to clear cache:', err);
+      // Fallback: just hard refresh
+      window.location.reload(true);
+    }
+  };
+
   const handleStartQuiz = () => setMode('start');
   const handleEnterCode = () => setMode('enter');
   const handleBack = () => {
     setMode(null);
     setSelectedCount(null);
+    setChallengeFriend(false);
     setGeneratedPhrase('');
     setCopied(false);
     setCodeWords(['', '', '']);
@@ -27,16 +52,31 @@ export default function HomeScreen({ onNavigate }) {
 
   const handleSelectCount = (count) => {
     setSelectedCount(count);
-    const phrase = generatePhrase();
-    setGeneratedPhrase(phrase);
+    if (challengeFriend) {
+      const phrase = generatePhrase();
+      setGeneratedPhrase(phrase);
+    } else {
+      // Solo mode — generate phrase internally and go straight to solo quiz
+      const phrase = generatePhrase();
+      onNavigate('solo', { phrase, count });
+    }
   };
 
   const handleCopy = () => {
     const text = `${generatedPhrase} (${selectedCount})`;
-    navigator.clipboard.writeText(text).then(() => {
+    try {
+      navigator.clipboard.writeText(text).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }).catch(() => {
+        // Fallback: select text so user can manually copy
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      });
+    } catch {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    });
+    }
   };
 
   const handleBegin = () => {
@@ -124,6 +164,36 @@ export default function HomeScreen({ onNavigate }) {
           <button className="btn btn-secondary btn-large" onClick={() => onNavigate('browse')}>
             BROWSE POKéMON
           </button>
+          <button className="btn btn-secondary btn-large" onClick={() => onNavigate('manual')}>
+            TCG MANUAL
+          </button>
+          <button className="btn btn-back" onClick={() => setMode('settings')} style={{ marginTop: 8 }}>
+            &#9881; Settings
+          </button>
+        </div>
+      )}
+
+      {mode === 'settings' && (
+        <div className="settings-section">
+          <h2>Settings</h2>
+          <div className="settings-card">
+            <div className="settings-item">
+              <div className="settings-item-info">
+                <span className="settings-item-title">Clear Cache & Refresh</span>
+                <span className="settings-item-desc">
+                  Clears all cached images, data, and app files, then reloads everything fresh from the server.
+                </span>
+              </div>
+              <button
+                className="btn btn-primary"
+                onClick={handleClearCache}
+                disabled={clearing}
+              >
+                {clearing ? 'Clearing...' : 'Clear & Refresh'}
+              </button>
+            </div>
+          </div>
+          <button className="btn btn-back" onClick={handleBack}>← Back</button>
         </div>
       )}
 
@@ -137,11 +207,19 @@ export default function HomeScreen({ onNavigate }) {
               </button>
             ))}
           </div>
+          <label className="challenge-toggle">
+            <input
+              type="checkbox"
+              checked={challengeFriend}
+              onChange={e => setChallengeFriend(e.target.checked)}
+            />
+            <span>Challenge a friend</span>
+          </label>
           <button className="btn btn-back" onClick={handleBack}>← Back</button>
         </div>
       )}
 
-      {mode === 'start' && selectedCount && (
+      {mode === 'start' && selectedCount && challengeFriend && (
         <div className="phrase-display">
           <h2>Your Quiz Code</h2>
           <div className="phrase-box">

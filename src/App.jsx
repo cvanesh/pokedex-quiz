@@ -3,6 +3,8 @@ import HomeScreen from './components/HomeScreen.jsx';
 import ChallengerScreen from './components/ChallengerScreen.jsx';
 import ValidatorScreen from './components/ValidatorScreen.jsx';
 import BrowseScreen from './components/BrowseScreen.jsx';
+import ManualScreen from './components/ManualScreen.jsx';
+import SoloScreen from './components/SoloScreen.jsx';
 import PokeDialog from './components/PokeDialog.jsx';
 
 export default function App() {
@@ -10,6 +12,7 @@ export default function App() {
   const [phrase, setPhrase] = useState('');
   const [count, setCount] = useState(10);
   const [pokemonData, setPokemonData] = useState(null);
+  const [dataError, setDataError] = useState(false);
   const [slideDir, setSlideDir] = useState('right');
   const prevScreen = useRef('home');
 
@@ -26,12 +29,20 @@ export default function App() {
     });
   }, []);
 
-  useEffect(() => {
+  const loadPokemonData = useCallback(() => {
+    setDataError(false);
     fetch(import.meta.env.BASE_URL + 'pokemon-data.json')
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
       .then(data => setPokemonData(data))
-      .catch(err => console.error('Failed to load pokemon data:', err));
+      .catch(() => setDataError(true));
   }, []);
+
+  useEffect(() => {
+    loadPokemonData();
+  }, [loadPokemonData]);
 
   const navigate = useCallback((newScreen, options = {}) => {
     if (options.phrase) setPhrase(options.phrase);
@@ -46,12 +57,15 @@ export default function App() {
   screenRef.current = screen;
 
   useEffect(() => {
+    const quizScreens = ['challenger', 'validator', 'solo'];
     const handlePopState = async () => {
       if (screenRef.current !== 'home') {
-        // Push state immediately to prevent actual navigation
         window.history.pushState(null, '', '');
-        const confirmed = await showConfirm('Leave the quiz?');
-        if (confirmed) {
+        // Only ask for confirmation on quiz screens where progress would be lost
+        if (quizScreens.includes(screenRef.current)) {
+          const confirmed = await showConfirm('Leave the quiz?');
+          if (confirmed) setScreen('home');
+        } else {
           setScreen('home');
         }
       }
@@ -69,8 +83,19 @@ export default function App() {
     return (
       <div className="pokedex-shell">
         <div className="pokedex-screen loading-screen">
-          <div className="pokeball-spinner" />
-          <p>Loading PokéDex data...</p>
+          {dataError ? (
+            <>
+              <p>Failed to load data.</p>
+              <button className="btn btn-primary" onClick={loadPokemonData}>
+                Retry
+              </button>
+            </>
+          ) : (
+            <>
+              <div className="pokeball-spinner" />
+              <p>Loading PokéDex data...</p>
+            </>
+          )}
         </div>
       </div>
     );
@@ -102,11 +127,23 @@ export default function App() {
               showConfirm={showConfirm}
             />
           )}
+          {screen === 'solo' && (
+            <SoloScreen
+              phrase={phrase}
+              count={count}
+              pokemonData={pokemonData}
+              onNavigate={navigate}
+              showConfirm={showConfirm}
+            />
+          )}
           {screen === 'browse' && (
             <BrowseScreen
               pokemonData={pokemonData}
               onNavigate={navigate}
             />
+          )}
+          {screen === 'manual' && (
+            <ManualScreen onNavigate={navigate} />
           )}
         </div>
       </div>

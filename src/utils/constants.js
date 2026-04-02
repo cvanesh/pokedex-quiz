@@ -51,4 +51,6 @@ export const GENERATION_NAMES = {
   9: 'Gen IX — Paldea',
 };
 
-export const IMAGE_BASE_URL = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/';
+const base = import.meta.env.BASE_URL;
+export const IMAGE_FULL_URL = `${base}images/full/`;
+export const IMAGE_THUMB_URL = `${base}images/thumb/`;

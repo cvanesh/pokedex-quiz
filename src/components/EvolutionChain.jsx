@@ -1,4 +1,4 @@
-import { IMAGE_BASE_URL } from '../utils/constants.js';
+import PokemonImage from './PokemonImage.jsx';
 
 export default function EvolutionChain({ chain }) {
   if (!chain || chain.length <= 1) {
@@ -19,18 +19,14 @@ export default function EvolutionChain({ chain }) {
     return (
       <div key={node.id} className="evo-tree-row">
         <div className="evo-pokemon">
-          <img
-            src={`${IMAGE_BASE_URL}${node.id}.png`}
-            alt={node.name}
-            className="evo-img"
-          />
+          <PokemonImage id={node.id} size="evo" alt={node.name} />
           <span className="evo-name">{node.name}</span>
         </div>
 
         {children.length > 0 && (
           <>
             <div className="evo-arrow-col">
-              {children.map((child, i) => (
+              {children.map((child) => (
                 <span key={child.id} className="evo-arrow">
                   {child.min_level ? `Lv.${child.min_level} →` : '→'}
                 </span>
